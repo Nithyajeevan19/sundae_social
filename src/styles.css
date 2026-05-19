@@ -1,0 +1,133 @@
+
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-cream: var(--cream);
+  --color-blush: var(--blush);
+  --color-chocolate: var(--chocolate);
+  --color-waffle: var(--waffle);
+  --color-caramel: var(--caramel);
+  --color-cherry: var(--cherry);
+  --color-soft-beige: var(--soft-beige);
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
+
+  --shadow-soft: 0 10px 30px -10px rgba(74, 36, 24, 0.18);
+  --shadow-pop: 0 18px 40px -12px rgba(229, 58, 26, 0.35);
+  --shadow-pillow: 0 8px 0 0 rgba(74, 36, 24, 0.12);
+
+  --gradient-hero: radial-gradient(120% 80% at 50% 0%, #FFE2C7 0%, #FFF4EA 55%, #FFF4EA 100%);
+  --gradient-warm: linear-gradient(135deg, #E53A1A 0%, #F4B23A 100%);
+  --gradient-blush: linear-gradient(135deg, #E88AA2 0%, #F4B23A 100%);
+  --gradient-cocoa: linear-gradient(135deg, #4A2418 0%, #C97A3D 100%);
+}
+
+:root {
+  --radius: 1.25rem;
+
+  --cream: #FFF4EA;
+  --blush: #E88AA2;
+  --chocolate: #4A2418;
+  --waffle: #F4B23A;
+  --caramel: #C97A3D;
+  --cherry: #D7263D;
+  --soft-beige: #F6E6DA;
+
+  --background: var(--cream);
+  --foreground: var(--chocolate);
+  --card: #FFFFFF;
+  --card-foreground: var(--chocolate);
+  --popover: #FFFFFF;
+  --popover-foreground: var(--chocolate);
+  --primary: #E53A1A;
+  --primary-foreground: #FFF4EA;
+  --secondary: var(--blush);
+  --secondary-foreground: var(--chocolate);
+  --muted: var(--soft-beige);
+  --muted-foreground: #7A4B3A;
+  --accent: var(--waffle);
+  --accent-foreground: var(--chocolate);
+  --destructive: #B91C1C;
+  --destructive-foreground: #FFF4EA;
+  --border: rgba(74, 36, 24, 0.12);
+  --input: rgba(74, 36, 24, 0.18);
+  --ring: #E53A1A;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html, body {
+    background: var(--gradient-hero);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+    font-feature-settings: "ss01", "ss02";
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .bg-gradient-warm { background-image: var(--gradient-warm); }
+  .bg-gradient-blush { background-image: var(--gradient-blush); }
+  .bg-gradient-cocoa { background-image: var(--gradient-cocoa); }
+  .shadow-pillow { box-shadow: var(--shadow-pillow); }
+  .shadow-pop { box-shadow: var(--shadow-pop); }
+  .shadow-soft { box-shadow: var(--shadow-soft); }
+  .mobile-shell {
+    max-width: 28rem;
+    margin-inline: auto;
+    position: relative;
+    min-height: 100dvh;
+  }
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+  50% { transform: translateY(-14px) rotate(calc(var(--r, 0deg) + 6deg)); }
+}
+.animate-float { animation: float-y 6s ease-in-out infinite; }
+
+@keyframes drift {
+  0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateY(110vh) translateX(var(--x, 20px)) rotate(360deg); opacity: 0; }
+}
+.animate-drift { animation: drift linear infinite; }
