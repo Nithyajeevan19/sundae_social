@@ -4,7 +4,6 @@ import { HeroBanner } from "@/components/HeroBanner";
 import { EmotionButtons, type Emotion } from "@/components/EmotionButtons";
 import { ReviewFlow } from "@/components/ReviewFlow";
 import { FeedbackForm } from "@/components/FeedbackForm";
-import { StoryTemplate } from "@/components/StoryTemplate";
 import { PersonalityQuiz } from "@/components/PersonalityQuiz";
 import { SectionReveal } from "@/components/SectionReveal";
 import { Confetti } from "@/components/Confetti";
@@ -143,15 +142,17 @@ export default function Index() {
       <section ref={storyRef} className="px-6 pb-12">
         <SectionReveal>
           <p className="mb-3 text-center text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            Step 2 · Share the sweetness
+            {firstName
+              ? `Hi ${firstName}, let's find your Sundae match 🍨`
+              : "Step 2 · Just for fun"}
           </p>
         </SectionReveal>
         <SectionReveal delay={0.05}>
-          <StoryTemplate />
+          <PersonalityQuiz />
         </SectionReveal>
       </section>
 
-      <section className="px-6 pb-12">
+      <section className="px-6 pb-16">
         <SectionReveal>
           <p className="mb-3 text-center text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
             Step 3 · Snap your sundae moment
@@ -159,19 +160,6 @@ export default function Index() {
         </SectionReveal>
         <SectionReveal delay={0.05}>
           <PhotoBooth />
-        </SectionReveal>
-      </section>
-
-      <section className="px-6 pb-16">
-        <SectionReveal>
-          <p className="mb-3 text-center text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            {firstName
-              ? `Hi ${firstName}, let's find your Sundae match 🍨`
-              : "Step 4 · Just for fun"}
-          </p>
-        </SectionReveal>
-        <SectionReveal delay={0.05}>
-          <PersonalityQuiz />
         </SectionReveal>
       </section>
 

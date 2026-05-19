@@ -49,24 +49,28 @@ const RESULTS: Record<string, QuizResult> = {
     emoji: "🍫",
     description: "Fun, energetic, and impossible to ignore.",
     gradient: "bg-gradient-cocoa",
+    recommendations: ["Death By Chocolate", "Choco Rocher", "Nutty Brownie Fudge"],
   },
   strawberry: {
     title: "Strawberry Dreamer",
     emoji: "🍓",
     description: "Soft-hearted, romantic, and effortlessly charming.",
     gradient: "bg-gradient-blush",
+    recommendations: ["Real Strawberry", "Berry Blast Sundae", "Rose Falooda"],
   },
   vanilla: {
     title: "Vanilla Classic",
     emoji: "🍦",
     description: "Calm, timeless, and quietly the favorite of everyone.",
     gradient: "bg-gradient-warm",
+    recommendations: ["Classic Vanilla Bean", "Caramel Crunch", "Butterscotch Bliss"],
   },
   mix: {
     title: "Sprinkle Storm",
     emoji: "✨",
     description: "A little bit of everything — and all of it is iconic.",
     gradient: "bg-gradient-warm",
+    recommendations: ["The Sundae Social Signature", "Rainbow Fiesta", "Crazy Loaded Sundae"],
   },
 };
 
