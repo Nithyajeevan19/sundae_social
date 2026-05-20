@@ -1,6 +1,6 @@
 export const INSTAGRAM_URL = "https://www.instagram.com/sundaesocial.in?igsh=eHJ4ejZ1aWJ1cjFz";
 export const INSTAGRAM_HANDLE = "@sundaesocial.in";
-export const GOOGLE_REVIEW_URL = "https://g.page/r/sundaesocial/review";
+export const GOOGLE_REVIEW_URL = "https://g.page/r/CZ6iHLwoaoz7EAE/review";
 
 import { toPng } from "html-to-image";
 

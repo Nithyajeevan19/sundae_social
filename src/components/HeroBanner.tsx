@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import heroImg from "@/assets/hero-sundae.png";
+import logoImg from "@/assets/sundae-social-logo.jpeg";
 import { FloatingDesserts } from "./FloatingDesserts";
 
 export function HeroBanner({ onScrollCta }: { onScrollCta: () => void }) {
@@ -15,9 +16,11 @@ export function HeroBanner({ onScrollCta }: { onScrollCta: () => void }) {
           className="flex items-center justify-between"
         >
           <div className="flex items-center gap-2">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground text-lg shadow-pop">
-              🍨
-            </span>
+            <img
+              src={logoImg}
+              alt="Sundae Social logo"
+              className="h-9 w-9 rounded-full object-cover shadow-pop"
+            />
             <span className="font-display text-lg font-semibold text-chocolate">Sundae Social</span>
           </div>
           <span className="rounded-full bg-card/80 px-3 py-1 text-xs font-medium text-chocolate backdrop-blur">
