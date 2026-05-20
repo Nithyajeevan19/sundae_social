@@ -4,7 +4,7 @@ import { AnimatedButton } from "./AnimatedButton";
 
 const CHIPS = ["Taste", "Service", "Wait time", "Cleanliness", "Pricing", "Other"];
 
-export function FeedbackForm({ onSubmit }: { onSubmit: () => void }) {
+export function FeedbackForm({ onSubmit }: { onSubmit: (review: string) => void }) {
   const [picked, setPicked] = useState<string[]>([]);
   const [text, setText] = useState("");
 
@@ -55,7 +55,11 @@ export function FeedbackForm({ onSubmit }: { onSubmit: () => void }) {
       />
 
       <div className="mt-4">
-        <AnimatedButton variant="primary" fullWidth onClick={onSubmit}>
+        <AnimatedButton
+          variant="primary"
+          fullWidth
+          onClick={() => onSubmit(text.trim() || picked.join(", ") || "No written feedback provided")}
+        >
           Send feedback privately
         </AnimatedButton>
       </div>

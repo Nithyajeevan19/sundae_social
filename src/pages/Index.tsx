@@ -9,6 +9,8 @@ import { SectionReveal } from "@/components/SectionReveal";
 import { Confetti } from "@/components/Confetti";
 import { LeadCaptureSheet } from "@/components/LeadCaptureSheet";
 import { PhotoBooth } from "@/components/PhotoBooth";
+import { submitLead } from "@/lib/lead";
+import { toast } from "sonner";
 
 export default function Index() {
   const [emotion, setEmotion] = useState<Emotion | null>(null);
@@ -17,6 +19,7 @@ export default function Index() {
   const [leadOpen, setLeadOpen] = useState(false);
   const [leadDone, setLeadDone] = useState(false);
   const [name, setName] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
   const pendingStageRef = useRef<"follow" | "feedback" | null>(null);
   const reviewRef = useRef<HTMLDivElement>(null);
   const storyRef = useRef<HTMLDivElement>(null);
@@ -38,8 +41,9 @@ export default function Index() {
     }
   };
 
-  const handleLeadComplete = (n: string) => {
+  const handleLeadComplete = (n: string, p: string) => {
     setName(n);
+    setPhone(p);
     setLeadDone(true);
     setLeadOpen(false);
     const next = pendingStageRef.current;
@@ -104,9 +108,25 @@ export default function Index() {
           {stage === "feedback" && (
             <motion.div key="feedback">
               <FeedbackForm
-                onSubmit={() => {
-                  fire();
-                  setStage("story");
+                onSubmit={async (review) => {
+                  try {
+                    await submitLead({
+                      name,
+                      phone,
+                      review,
+                      reviews: review,
+                      rating: emotion ?? "feedback",
+                    });
+                    fire();
+                    setStage("story");
+                  } catch (error) {
+                    const message =
+                      error instanceof Error
+                        ? error.message
+                        : "Unable to save your feedback. Please try again.";
+                    toast.error("Couldnâ€™t save your feedback", { description: message });
+                    console.error("[feedback] submission failed", error);
+                  }
                 }}
               />
               <button
