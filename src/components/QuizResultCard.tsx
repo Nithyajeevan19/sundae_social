@@ -5,7 +5,6 @@ import { INSTAGRAM_HANDLE, shareStory } from "@/lib/social";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
-
 export interface QuizResult {
   title: string;
   emoji: string;

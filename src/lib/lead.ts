@@ -6,14 +6,6 @@ export interface LeadPayload {
   phone: string;
 }
 
-export interface FeedbackPayload {
-  name?: string;
-  phone?: string;
-  emotion: string;
-  chips: string[];
-  feedback: string;
-}
-
 export async function submitLead({ name, phone }: LeadPayload): Promise<void> {
   const payload = {
     name: name.trim(),
@@ -32,36 +24,6 @@ export async function submitLead({ name, phone }: LeadPayload): Promise<void> {
     });
   } catch (error) {
     throw new Error("Unable to save your details. Please try again.");
-  }
-}
-
-export async function submitFeedback({
-  name,
-  phone,
-  emotion,
-  chips,
-  feedback,
-}: FeedbackPayload): Promise<void> {
-  const payload = {
-    name: name?.trim() || "",
-    phone: phone ? normalizePhone(phone) : "",
-    emotion,
-    chips,
-    feedback: feedback.trim(),
-    timestamp: new Date().toISOString(),
-  };
-
-  try {
-    await fetch(LEAD_ENDPOINT, {
-      method: "POST",
-      mode: "no-cors",
-      headers: {
-        "Content-Type": "text/plain",
-      },
-      body: JSON.stringify(payload),
-    });
-  } catch (error) {
-    throw new Error("Unable to save your feedback. Please try again.");
   }
 }
 

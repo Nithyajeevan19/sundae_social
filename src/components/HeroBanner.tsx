@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import heroImg from "@/assets/hero-sundae.webp";
+import heroImg from "@/assets/hero-sundae.png";
 import { FloatingDesserts } from "./FloatingDesserts";
 
 export function HeroBanner({ onScrollCta }: { onScrollCta: () => void }) {
@@ -27,23 +27,21 @@ export function HeroBanner({ onScrollCta }: { onScrollCta: () => void }) {
 
         <div className="relative mt-6">
           <motion.div
-            className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl will-change-transform"
+            className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
             style={{
               background: "radial-gradient(circle, rgba(244,178,58,0.55), transparent 70%)",
             }}
-            animate={{ scale: [1, 1.05, 1] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 4, repeat: Infinity }}
           />
           <motion.img
             src={heroImg}
-            fetchPriority="high"
-            loading="eager"
             alt="Sundae Social signature sundae with three scoops, sprinkles and a cherry on top"
-            className="relative mx-auto h-72 w-72 object-contain will-change-transform"
+            className="relative mx-auto h-72 w-72 object-contain"
             initial={{ y: 30, opacity: 0, rotate: -6 }}
-            animate={{ y: [0, -8, 0], opacity: 1, rotate: 0 }}
+            animate={{ y: [0, -10, 0], opacity: 1, rotate: 0 }}
             transition={{
-              y: { duration: 6, repeat: Infinity, ease: "easeInOut" },
+              y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
               opacity: { duration: 0.8 },
               rotate: { duration: 0.8 },
             }}
