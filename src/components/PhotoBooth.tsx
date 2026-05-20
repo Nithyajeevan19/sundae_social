@@ -90,12 +90,7 @@ export function PhotoBooth() {
     [facing, stopStream]
   );
 
-  useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [open]);
+
 
   useEffect(() => {
     if (open && !photo) {
@@ -249,210 +244,205 @@ export function PhotoBooth() {
   };
 
   return (
-    <>
-      <button
-        onClick={() => setOpen(true)}
-        className="group relative w-full overflow-hidden rounded-3xl bg-gradient-warm p-5 text-left shadow-pop"
-      >
-        <div className="absolute -right-4 -top-4 text-6xl opacity-30">📸</div>
-        <span className="inline-flex items-center gap-1 rounded-full bg-white/25 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-cream backdrop-blur">
-          <Sparkles size={12} /> New
-        </span>
-        <h3 className="mt-3 font-display text-2xl leading-tight text-cream">
-          Sundae Selfie Booth
-        </h3>
-        <p className="mt-1 text-sm text-cream/90">
-          Snap a pic, pick a frame, share the sweetness ✨
-        </p>
-        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-cream px-4 py-2 text-sm font-semibold text-chocolate">
-          <Camera size={16} /> Open booth
-        </div>
-      </button>
-
-      <AnimatePresence>
-  {open && (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[60] overflow-hidden bg-chocolate/90 backdrop-blur-md"
-    >
-      <motion.div
-        initial={{ y: "100%", scale: 0.98 }}
-        animate={{ y: 0, scale: 1 }}
-        exit={{ y: "100%" }}
-        transition={{ type: "spring", stiffness: 200, damping: 26 }}
-        className="relative flex h-full w-full flex-col overflow-hidden bg-gradient-hero"
-      >
-        {/* Header */}
-        <div className="shrink-0 flex items-center justify-between px-5 pb-3 pt-[max(1.25rem,env(safe-area-inset-top))]">
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-              Sundae Social
-            </p>
-            <h3 className="font-display text-xl text-chocolate">Selfie Booth</h3>
+    <AnimatePresence mode="wait">
+      {!open ? (
+        <motion.button
+          key="closed"
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.98 }}
+          onClick={() => setOpen(true)}
+          className="group relative w-full overflow-hidden rounded-3xl bg-gradient-warm p-5 text-left shadow-pop"
+        >
+          <div className="absolute -right-4 -top-4 text-6xl opacity-30">📸</div>
+          <span className="inline-flex items-center gap-1 rounded-full bg-white/25 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-cream backdrop-blur">
+            <Sparkles size={12} /> New
+          </span>
+          <h3 className="mt-3 font-display text-2xl leading-tight text-cream">
+            Sundae Selfie Booth
+          </h3>
+          <p className="mt-1 text-sm text-cream/90">
+            Snap a pic, pick a frame, share the sweetness ✨
+          </p>
+          <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-cream px-4 py-2 text-sm font-semibold text-chocolate">
+            <Camera size={16} /> Open booth
           </div>
-          <button
-            onClick={close}
-            className="grid h-10 w-10 place-items-center rounded-full bg-card shadow-soft"
-            aria-label="Close"
-          >
-            <X size={18} />
-          </button>
-        </div>
-
-        {/* Live camera or preview */}
-        <div className="relative mx-4 mb-4 min-h-0 flex-1 max-w-full overflow-hidden rounded-[2rem] bg-chocolate shadow-pop">
-          {!photo ? (
-            <>
-              <video
-                ref={videoRef}
-                autoPlay
-                muted
-                playsInline
-                className="absolute inset-0 h-full w-full object-cover"
-                style={{ transform: facing === "user" ? "scaleX(-1)" : "none" }}
-              />
-
-              {/* Corner brackets */}
-              {[
-                "top-3 left-3 border-l-2 border-t-2 rounded-tl-xl",
-                "top-3 right-3 border-r-2 border-t-2 rounded-tr-xl",
-                "bottom-3 left-3 border-l-2 border-b-2 rounded-bl-xl",
-                "bottom-3 right-3 border-r-2 border-b-2 rounded-br-xl",
-              ].map((c, i) => (
-                <span
-                  key={i}
-                  className={`pointer-events-none absolute h-8 w-8 border-cream/80 ${c}`}
-                />
-              ))}
-
-              <div className="pointer-events-none absolute left-3 top-3 rounded-full bg-cherry px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-cream">
-                ● Live
-              </div>
-
-              {err && (
-                <div className="absolute inset-0 grid place-items-center bg-chocolate/80 p-6 text-center text-sm text-cream">
-                  {err}
-                </div>
-              )}
-            </>
-          ) : (
-            <motion.div
-              key={frame}
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-              className="h-full w-full"
-            >
-              <FramedPhoto frame={frame} photo={photo} innerRef={frameRef} />
-            </motion.div>
-          )}
-
-          {/* Flash overlay */}
-          <AnimatePresence>
-            {flash && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.9 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="pointer-events-none absolute inset-0 bg-white"
-              />
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Controls */}
-        <div className="shrink-0 px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-          {!photo ? (
-            <div className="flex items-center justify-between gap-4">
-              <button
-                onClick={flipCamera}
-                className="grid h-12 w-12 place-items-center rounded-full bg-card shadow-soft"
-                aria-label="Flip camera"
-              >
-                <SwitchCamera size={18} />
-              </button>
-
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                onClick={capture}
-                disabled={!stream}
-                className="relative grid h-20 w-20 place-items-center rounded-full bg-cream shadow-pop disabled:opacity-50"
-                aria-label="Capture"
-              >
-                <span className="absolute inset-1.5 rounded-full border-2 border-chocolate/30" />
-                <span className="h-14 w-14 rounded-full bg-gradient-warm" />
-              </motion.button>
-
-              <div className="h-12 w-12" />
+        </motion.button>
+      ) : (
+        <motion.div
+          key="open"
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.98 }}
+          className="relative flex h-[580px] w-full flex-col overflow-hidden rounded-3xl bg-gradient-hero shadow-pop"
+        >
+          {/* Header */}
+          <div className="shrink-0 flex items-center justify-between px-5 pb-3 pt-4">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                Sundae Social
+              </p>
+              <h3 className="font-display text-xl text-chocolate">Selfie Booth</h3>
             </div>
-          ) : (
-            <>
-              <div className="mb-3 flex justify-center gap-2">
-                {FRAMES.map((f) => (
-                  <button
-                    key={f.key}
-                    onClick={() => setFrame(f.key)}
-                    className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                      frame === f.key
-                        ? "bg-gradient-warm text-cream shadow-pop"
-                        : "bg-card text-chocolate shadow-soft"
-                    }`}
-                  >
-                    {f.emoji} {f.label}
-                  </button>
+            <button
+              onClick={close}
+              className="grid h-10 w-10 place-items-center rounded-full bg-card shadow-soft text-chocolate"
+              aria-label="Close"
+            >
+              <X size={18} />
+            </button>
+          </div>
+
+          {/* Live camera or preview */}
+          <div className="relative mx-4 mb-4 min-h-0 flex-1 max-w-full overflow-hidden rounded-[2rem] bg-chocolate shadow-pop">
+            {!photo ? (
+              <>
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  muted
+                  playsInline
+                  className="absolute inset-0 h-full w-full object-cover"
+                  style={{ transform: facing === "user" ? "scaleX(-1)" : "none" }}
+                />
+
+                {/* Corner brackets */}
+                {[
+                  "top-3 left-3 border-l-2 border-t-2 rounded-tl-xl",
+                  "top-3 right-3 border-r-2 border-t-2 rounded-tr-xl",
+                  "bottom-3 left-3 border-l-2 border-b-2 rounded-bl-xl",
+                  "bottom-3 right-3 border-r-2 border-b-2 rounded-br-xl",
+                ].map((c, i) => (
+                  <span
+                    key={i}
+                    className={`pointer-events-none absolute h-8 w-8 border-cream/80 ${c}`}
+                  />
                 ))}
-              </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <AnimatedButton variant="cream" onClick={retake} className="flex-1">
-                    <RefreshCw size={16} /> Retake
-                  </AnimatedButton>
-
-                  <AnimatedButton
-                    variant="primary"
-                    onClick={shareOrDownload}
-                    className="flex-1"
-                    disabled={busy}
-                  >
-                    <Share2 size={16} />
-                    {busy ? "Saving…" : "Share to Story"}
-                  </AnimatedButton>
+                <div className="pointer-events-none absolute left-3 top-3 rounded-full bg-cherry px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-cream">
+                  ● Live
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <AnimatedButton
-                    variant="blush"
-                    onClick={downloadImage}
-                    className="flex-1"
-                    disabled={busy}
-                  >
-                    <Download size={16} /> Download
-                  </AnimatedButton>
+                {err && (
+                  <div className="absolute inset-0 grid place-items-center bg-chocolate/80 p-6 text-center text-sm text-cream">
+                    {err}
+                  </div>
+                )}
+              </>
+            ) : (
+              <motion.div
+                key={frame}
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="h-full w-full"
+              >
+                <FramedPhoto frame={frame} photo={photo} innerRef={frameRef} />
+              </motion.div>
+            )}
 
-                  <AnimatedButton variant="cream" onClick={copyHandle} className="flex-1">
-                    {copied ? <Check size={16} /> : <Copy size={16} />}
-                    {copied ? "Copied" : "Copy @handle"}
-                  </AnimatedButton>
+            {/* Flash overlay */}
+            <AnimatePresence>
+              {flash && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.9 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="pointer-events-none absolute inset-0 bg-white"
+                />
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Controls */}
+          <div className="shrink-0 px-5 pb-5">
+            {!photo ? (
+              <div className="flex items-center justify-between gap-4">
+                <button
+                  onClick={flipCamera}
+                  className="grid h-12 w-12 place-items-center rounded-full bg-card shadow-soft text-chocolate"
+                  aria-label="Flip camera"
+                >
+                  <SwitchCamera size={18} />
+                </button>
+
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  onClick={capture}
+                  disabled={!stream}
+                  className="relative grid h-20 w-20 place-items-center rounded-full bg-cream shadow-pop disabled:opacity-50"
+                  aria-label="Capture"
+                >
+                  <span className="absolute inset-1.5 rounded-full border-2 border-chocolate/30" />
+                  <span className="h-14 w-14 rounded-full bg-gradient-warm" />
+                </motion.button>
+
+                <div className="h-12 w-12" />
+              </div>
+            ) : (
+              <>
+                <div className="mb-3 flex justify-center gap-2">
+                  {FRAMES.map((f) => (
+                    <button
+                      key={f.key}
+                      onClick={() => setFrame(f.key)}
+                      className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                        frame === f.key
+                          ? "bg-gradient-warm text-cream shadow-pop"
+                          : "bg-card text-chocolate shadow-soft"
+                      }`}
+                    >
+                      {f.emoji} {f.label}
+                    </button>
+                  ))}
                 </div>
 
-                <p className="pt-1 text-center text-[11px] text-muted-foreground">
-                  Tip: post on your Story & tag {INSTAGRAM_HANDLE} for a sweet surprise 💖
-                </p>
-              </div>
-            </>
-          )}
-        </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <AnimatedButton variant="cream" onClick={retake} className="flex-1">
+                      <RefreshCw size={16} /> Retake
+                    </AnimatedButton>
 
-        <canvas ref={canvasRef} className="hidden" />
-      </motion.div>
-    </motion.div>
-  )}
-</AnimatePresence>
-    </>
+                    <AnimatedButton
+                      variant="primary"
+                      onClick={shareOrDownload}
+                      className="flex-1"
+                      disabled={busy}
+                    >
+                      <Share2 size={16} />
+                      {busy ? "Saving…" : "Share to Story"}
+                    </AnimatedButton>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <AnimatedButton
+                      variant="blush"
+                      onClick={downloadImage}
+                      className="flex-1"
+                      disabled={busy}
+                    >
+                      <Download size={16} /> Download
+                    </AnimatedButton>
+
+                    <AnimatedButton variant="cream" onClick={copyHandle} className="flex-1">
+                      {copied ? <Check size={16} /> : <Copy size={16} />}
+                      {copied ? "Copied" : "Copy @handle"}
+                    </AnimatedButton>
+                  </div>
+
+                  <p className="pt-1 text-center text-[11px] text-muted-foreground">
+                    Tip: post on your Story & tag {INSTAGRAM_HANDLE} for a sweet surprise 💖
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
+
+          <canvas ref={canvasRef} className="hidden" />
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
