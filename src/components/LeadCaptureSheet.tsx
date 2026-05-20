@@ -10,11 +10,12 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onComplete: (name: string, phone: string) => void;
+  rating?: string | number;
 }
 
 type Step = "name" | "phone" | "success";
 
-export function LeadCaptureSheet({ open, onClose, onComplete }: Props) {
+export function LeadCaptureSheet({ open, onClose, onComplete, rating }: Props) {
   const [step, setStep] = useState<Step>("name");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -70,7 +71,7 @@ export function LeadCaptureSheet({ open, onClose, onComplete }: Props) {
     setEmoji(null);
     setSubmitting(true);
     try {
-      await submitLead({ name: cleanName, phone: cleanPhone });
+      await submitLead({ name: cleanName, phone: cleanPhone, rating });
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unable to save your details. Please try again.";
@@ -82,8 +83,8 @@ export function LeadCaptureSheet({ open, onClose, onComplete }: Props) {
     setSubmitting(false);
     setCelebrate(true);
     setStep("success");
-    toast.success("Sweet! Your details were saved", {
-      description: "We’ll keep the Sundae Social treats coming.",
+    toast.success("Thanks for your interest", {
+      description: "",
     });
     setTimeout(() => {
       onComplete(cleanName, cleanPhone);
@@ -312,7 +313,7 @@ export function LeadCaptureSheet({ open, onClose, onComplete }: Props) {
                           <Loader2 size={18} className="animate-spin" /> Saving…
                         </>
                       ) : (
-                        <>Save my spot 🍨</>
+                        <>Submit review🍨</>
                       )}
                     </AnimatedButton>
                   </motion.div>

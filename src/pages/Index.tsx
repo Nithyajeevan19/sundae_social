@@ -10,7 +10,11 @@ import { Confetti } from "@/components/Confetti";
 import { LeadCaptureSheet } from "@/components/LeadCaptureSheet";
 import { PhotoBooth } from "@/components/PhotoBooth";
 import { submitLead } from "@/lib/lead";
+import { syncPendingSubmissions } from "@/lib/submissionQueue";
 import { toast } from "sonner";
+
+type PostSubmitAction = "main" | "instagram" | "google";
+const POST_SUBMIT_STATE_KEY = "sundaeSocial.postSubmitState";
 
 export default function Index() {
   const [emotion, setEmotion] = useState<Emotion | null>(null);
@@ -20,6 +24,8 @@ export default function Index() {
   const [leadDone, setLeadDone] = useState(false);
   const [name, setName] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
+  const [postSubmitAction, setPostSubmitAction] = useState<PostSubmitAction>("main");
+  const [instagramDone, setInstagramDone] = useState(false);
   const pendingStageRef = useRef<"follow" | "feedback" | null>(null);
   const reviewRef = useRef<HTMLDivElement>(null);
   const storyRef = useRef<HTMLDivElement>(null);
@@ -28,6 +34,65 @@ export default function Index() {
     setCelebrate(true);
     setTimeout(() => setCelebrate(false), 2200);
   };
+
+  useEffect(() => {
+    void syncPendingSubmissions();
+
+    const retrySync = () => void syncPendingSubmissions();
+    window.addEventListener("online", retrySync);
+
+    return () => window.removeEventListener("online", retrySync);
+  }, []);
+
+  useEffect(() => {
+    try {
+      const saved = window.sessionStorage.getItem(POST_SUBMIT_STATE_KEY);
+      if (!saved) return;
+
+      const parsed = JSON.parse(saved) as {
+        emotion?: Emotion | null;
+        instagramDone?: boolean;
+        leadDone?: boolean;
+        name?: string;
+        phone?: string;
+        postSubmitAction?: PostSubmitAction;
+        stage?: "follow" | "feedback" | "story";
+      };
+
+      if (!parsed.leadDone) return;
+
+      setLeadDone(true);
+      setName(parsed.name ?? "");
+      setPhone(parsed.phone ?? "");
+      setEmotion(parsed.emotion ?? null);
+      setInstagramDone(Boolean(parsed.instagramDone));
+      setPostSubmitAction(parsed.postSubmitAction ?? "main");
+      setStage(parsed.stage ?? "follow");
+    } catch (error) {
+      console.warn("[post-submit] unable to restore state", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!leadDone) return;
+
+    try {
+      window.sessionStorage.setItem(
+        POST_SUBMIT_STATE_KEY,
+        JSON.stringify({
+          emotion,
+          instagramDone,
+          leadDone,
+          name,
+          phone,
+          postSubmitAction,
+          stage,
+        }),
+      );
+    } catch (error) {
+      console.warn("[post-submit] unable to save state", error);
+    }
+  }, [emotion, instagramDone, leadDone, name, phone, postSubmitAction, stage]);
 
   const handleEmotion = (e: Emotion) => {
     setEmotion(e);
@@ -46,6 +111,7 @@ export default function Index() {
     setPhone(p);
     setLeadDone(true);
     setLeadOpen(false);
+    setPostSubmitAction("main");
     const next = pendingStageRef.current;
     pendingStageRef.current = null;
     if (next) {
@@ -53,6 +119,49 @@ export default function Index() {
       fire();
     }
   };
+
+  const handleBackToThankYou = () => {
+    setPostSubmitAction("main");
+    setInstagramDone(false);
+    setStage("follow");
+    setTimeout(
+      () => reviewRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      80,
+    );
+  };
+
+  const handleInstagramAction = () => {
+    setInstagramDone(true);
+    setPostSubmitAction("instagram");
+    setStage("follow");
+  };
+
+  const handleGoogleReviewAction = () => {
+    setPostSubmitAction("google");
+    setStage("follow");
+  };
+
+  useEffect(() => {
+    if (postSubmitAction !== "google") return;
+
+    const returnToThankYou = () => {
+      setPostSubmitAction("main");
+      setInstagramDone(false);
+      setStage("follow");
+      setTimeout(
+        () => reviewRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+        80,
+      );
+    };
+
+    window.addEventListener("focus", returnToThankYou);
+    document.addEventListener("visibilitychange", returnToThankYou);
+
+    return () => {
+      window.removeEventListener("focus", returnToThankYou);
+      document.removeEventListener("visibilitychange", returnToThankYou);
+    };
+  }, [postSubmitAction]);
 
   useEffect(() => {
     if (stage === "story") {
@@ -88,7 +197,13 @@ export default function Index() {
           {stage === "follow" && (
             <motion.div key="follow">
               <ReviewFlow
+                instagramDone={instagramDone}
+                showBack={postSubmitAction !== "main"}
+                onBack={handleBackToThankYou}
+                onInstagram={handleInstagramAction}
+                onGoogleReview={handleGoogleReviewAction}
                 onDone={() => {
+                  setPostSubmitAction("main");
                   fire();
                   setStage("story");
                 }}
@@ -115,6 +230,9 @@ export default function Index() {
                       phone,
                       review,
                       reviews: review,
+                      feedback: review,
+                      suggestion: review,
+                      comment: review,
                       rating: emotion ?? "feedback",
                     });
                     fire();
@@ -142,7 +260,23 @@ export default function Index() {
           )}
 
           {stage === "story" && (
-            <motion.div key="story" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <motion.div
+              key="story"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              {leadDone && emotion !== "improve" && (
+                <motion.button
+                  type="button"
+                  onClick={handleBackToThankYou}
+                  className="mb-3 inline-flex items-center rounded-full bg-card/80 px-3 py-1.5 text-xs font-medium text-chocolate shadow-soft backdrop-blur transition hover:bg-card"
+                  whileHover={{ y: -1, scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  ← Back
+                </motion.button>
+              )}
               <div className="rounded-3xl bg-gradient-blush p-5 text-center shadow-pop">
                 <span className="text-3xl">🎉</span>
                 <h3 className="mt-1 font-display text-xl text-chocolate">
@@ -200,6 +334,7 @@ export default function Index() {
           pendingStageRef.current = null;
         }}
         onComplete={handleLeadComplete}
+        rating={emotion ?? ""}
       />
     </main>
   );
