@@ -9,7 +9,7 @@ import { submitLead, isValidPhone } from "@/lib/lead";
 interface Props {
   open: boolean;
   onClose: () => void;
-  onComplete: (name: string) => void;
+  onComplete: (name: string, phone: string) => void;
 }
 
 type Step = "name" | "phone" | "success";
@@ -86,7 +86,7 @@ export function LeadCaptureSheet({ open, onClose, onComplete }: Props) {
       description: "We’ll keep the Sundae Social treats coming.",
     });
     setTimeout(() => {
-      onComplete(cleanName);
+      onComplete(cleanName, cleanPhone);
       setName("");
       setPhone("");
     }, 1400);

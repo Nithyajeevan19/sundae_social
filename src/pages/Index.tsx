@@ -17,6 +17,7 @@ export default function Index() {
   const [leadOpen, setLeadOpen] = useState(false);
   const [leadDone, setLeadDone] = useState(false);
   const [name, setName] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
   const pendingStageRef = useRef<"follow" | "feedback" | null>(null);
   const reviewRef = useRef<HTMLDivElement>(null);
   const storyRef = useRef<HTMLDivElement>(null);
@@ -38,8 +39,9 @@ export default function Index() {
     }
   };
 
-  const handleLeadComplete = (n: string) => {
+  const handleLeadComplete = (n: string, p: string) => {
     setName(n);
+    setPhone(p);
     setLeadDone(true);
     setLeadOpen(false);
     const next = pendingStageRef.current;
@@ -104,6 +106,9 @@ export default function Index() {
           {stage === "feedback" && (
             <motion.div key="feedback">
               <FeedbackForm
+                emotion={emotion}
+                name={name}
+                phone={phone}
                 onSubmit={() => {
                   fire();
                   setStage("story");
@@ -142,24 +147,24 @@ export default function Index() {
       <section ref={storyRef} className="px-6 pb-12">
         <SectionReveal>
           <p className="mb-3 text-center text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            {firstName
-              ? `Hi ${firstName}, let's find your Sundae match 🍨`
-              : "Step 2 · Just for fun"}
+            Step 2 · Snap your sundae moment
           </p>
         </SectionReveal>
         <SectionReveal delay={0.05}>
-          <PersonalityQuiz />
+          <PhotoBooth />
         </SectionReveal>
       </section>
 
       <section className="px-6 pb-16">
         <SectionReveal>
           <p className="mb-3 text-center text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            Step 3 · Snap your sundae moment
+            {firstName
+              ? `Hi ${firstName}, let's find your Sundae match 🍨`
+              : "Step 3 · Just for fun"}
           </p>
         </SectionReveal>
         <SectionReveal delay={0.05}>
-          <PhotoBooth />
+          <PersonalityQuiz />
         </SectionReveal>
       </section>
 
